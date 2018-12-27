@@ -1,0 +1,5 @@
+{
+    "mongoAddress": "<MongoDB URI>",
+    "apiPort": 3000,
+    "midLength": 4
+}

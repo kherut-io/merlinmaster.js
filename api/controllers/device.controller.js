@@ -1,3 +1,5 @@
+const config = require("../../config.json");
+
 exports.listAllDevices = function(app, db, req, res) {
     db.collection('device').find({}).toArray((err, result) => {
         if (err) {
@@ -9,7 +11,7 @@ exports.listAllDevices = function(app, db, req, res) {
 };
 
 exports.addDevice = function(app, db, req, res) {
-    const device = { mid: generateMID(4), name: req.body.name, alias: null, ip: req.body.ip, status: "UP", value: null, time: new Date().getTime() };
+    const device = { mid: generateMID(config.midLength), name: req.body.name, alias: null, ip: req.body.ip, status: "UP", value: null, time: new Date().getTime() };
 
     db.collection('device').insert(device, (err, result) => {
         if (err) { 
