@@ -1,5 +1,5 @@
 exports.printAllData = function(app, db, req, res) {
-    res.send(getData(["temperatureCPU", "uptime"]));
+    res.send(getData(["temperatureCPU", "uptime, cpuinfo"]));
 };
 
 exports.printData = function(app, db, req, res) {
@@ -17,6 +17,9 @@ function getData(info) {
                 break;
             case "uptime":
                 data[info[i]] = 3600;
+                break;
+            case "cpuinfo":
+                data[info[i]] = "cat /proc/cpuinfo <- output";
                 break;
         }
     }
