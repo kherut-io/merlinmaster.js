@@ -1,6 +1,6 @@
 {
     "environment": "development",
-    "mongoAddress": "mongodb://adampisula:q8dh15ru@ds157819.mlab.com:57819/merlinbrain-dev",
+    "mongoAddress": "<MongoDB URI>",
     "apiPort": 3000,
     "httpPort": 8000,
     "midLength": 4
