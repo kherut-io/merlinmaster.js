@@ -29,7 +29,10 @@ exports.showDevice = function(app, db, req, res) {
         if (err) {
             res.send({'error':'An error has occurred'});
         } else {
-            res.send(result);
+            if(result == null) {
+                res.send({ ok: 0 });
+            } else
+                res.send(result);
         } 
     });
 };
@@ -37,11 +40,24 @@ exports.showDevice = function(app, db, req, res) {
 exports.removeDevice = function(app, db, req, res) {
     const details = { 'mid': req.params.mid };
 
-    db.collection('device').remove(details, (err, result) => {
+    db.collection('device').findOne(details, (err, result) => {
         if (err) {
             res.send({'error':'An error has occurred'});
         } else {
-            res.send({ ok: 1 });
+            if(result == null) {
+                res.send({ ok: 0 });
+            }
+            
+            else {
+                db.collection('device').remove(details, (err, result) => {
+                    if (err) {
+                        res.send({'error':'An error has occurred'});
+                    } else {
+                        res.send({ ok: 1 });
+                    } 
+                });
+            }
+                
         } 
     });
 };

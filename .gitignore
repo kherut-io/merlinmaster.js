@@ -1,2 +1,4 @@
 node_modules/
-config.js
+config.json
+log/combined.log
+log/error.log
