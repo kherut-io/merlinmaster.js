@@ -1,18 +1,21 @@
 {
   "name": "merlinbrain.js",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Kherut.io",
+  "license": "GPL-3.0",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "connect": "^3.6.6",
     "express": "^4.16.4",
-    "mongodb": "^2.2.16"
+    "mongodb": "^2.2.16",
+    "serve-static": "^1.13.2",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"
