@@ -1,4 +1,5 @@
 const config = require("../../config.json");
+const functions = require("../../functions");
 
 exports.listAllDevices = function(app, db, req, res) {
     db.collection('device').find({}).toArray((err, result) => {
@@ -11,7 +12,19 @@ exports.listAllDevices = function(app, db, req, res) {
 };
 
 exports.addDevice = function(app, db, req, res) {
-    const device = { mid: generateMID(config.midLength), name: req.body.name, alias: null, ip: req.body.ip, status: "UP", value: null, time: new Date().getTime() };
+    var device = { mid: functions.generateMID(config.midLength), name: req.body.name, alias: req.body.alias, ip: req.body.ip, status: req.body.status, value: req.body.value, additional: req.body.additional, time: new Date().toJSON() };
+
+    for(var key in device) {
+        if(device[key] == undefined || device[key] == '')
+            device[key] = null;
+    }
+
+    if(device.name == null || device.ip == null) {
+        res.send({ ok: 0, error: "You didn't specify a name or an IP for the device." });
+        return;
+    }
+
+    device.additional = (device.additional == null ? {} : JSON.parse(device.additional));
 
     db.collection('device').insert(device, (err, result) => {
         if (err) { 
@@ -30,7 +43,7 @@ exports.showDevice = function(app, db, req, res) {
             res.send({'error':'An error has occurred'});
         } else {
             if(result == null) {
-                res.send({ ok: 0 });
+                res.send({ ok: 0, error: "There's no device with such MID." });
             } else
                 res.send(result);
         } 
@@ -45,7 +58,7 @@ exports.removeDevice = function(app, db, req, res) {
             res.send({'error':'An error has occurred'});
         } else {
             if(result == null) {
-                res.send({ ok: 0 });
+                res.send({ ok: 0, error: "There's no device with such MID." });
             }
             
             else {
@@ -70,21 +83,25 @@ exports.updateDevice = function(app, db, req, res) {
             res.send({'error':'An error has occurred'});
         } else {
             var currDevice = result;
+            var newData = new Object();
 
-            var newAlias = req.body.alias,
-                newStatus = req.body.status,
-                newValue = req.body.value;
+            newData.alias = req.body.alias;
+            newData.status = req.body.status;
+            newData.value = req.body.value;
+            newData.additional = req.body.additional;
 
-            if(newAlias == null)
-                newAlias = currDevice.alias;
+            for(var key in newData) {
+                if(newData[key] == undefined || newData[key] == '') {
+                    if(key != "additional")
+                        newData[key] = currDevice[key];
+                    else
+                        newData[key] = JSON.stringify(currDevice[key]);
+                }
+            }
 
-            if(newStatus == null)
-                newStatus = currDevice.status;
+            newData.additional = (newData.additional == null ? {} : JSON.parse(newData.additional)); 
 
-            if(newValue == null)
-                newValue = currDevice.value;
-
-            const device = { mid: currDevice.mid, name: currDevice.name, ip: currDevice.ip, alias: newAlias, status: newStatus, value: newValue, time: currDevice.time };
+            const device = { mid: currDevice.mid, name: currDevice.name, ip: currDevice.ip, alias: newData.alias, status: newData.status, value: newData.value, additional: newData.additional, time: currDevice.time };
 
             db.collection('device').update(details, device, (err, result) => {
                 if (err) {
@@ -102,14 +119,3 @@ exports.updateDevice = function(app, db, req, res) {
         } 
     });
 };
-
-function generateMID(length) {
-    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    var mid = "";
-
-    for(var i = 0; i < length; i++)
-        mid += characters[Math.floor(Math.random() * characters.length)];
-
-    return mid;
-}
