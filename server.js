@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const connect = require('connect');
 const serveStatic = require('serve-static');
 const winston = require('winston');
+const ip = require('ip');
 
 //CONFIG
 const config = require('./config.json');
@@ -55,11 +56,11 @@ MongoClient.connect(config.mongoAddress, (err, database) => {
 
     //MAKE THE API LISTEN ON apiPort
     app.listen(apiPort, () => {
-        logger.info('API on localhost:' + apiPort);
+        logger.info('API on ' + ip.address() + ':' + apiPort);
 
         //CREATE HTTP SERVER ON httpPort -> SERVES /www
         connect().use(serveStatic(__dirname + '/www')).listen(httpPort, function(){
-            logger.info('HTTP on localhost:' + httpPort);
+            logger.info('HTTP on ' + ip.address() + ':' + httpPort);
         });
     });               
 })

@@ -13,6 +13,7 @@
     "body-parser": "^1.18.3",
     "connect": "^3.6.6",
     "express": "^4.16.4",
+    "ip": "^1.1.5",
     "mongodb": "^2.2.16",
     "serve-static": "^1.13.2",
     "winston": "^3.1.0"
