@@ -1,7 +1,9 @@
-const config = require("../../config.json");
-const functions = require("../../functions");
+const requestIp = require('request-ip');
 
-exports.listAllDevices = function(app, db, req, res) {
+const config = require('../../config.json');
+const functions = require('../../functions');
+
+exports.listAllDevices = function(api, db, req, res) {
     db.collection('device').find({}).toArray((err, result) => {
         if (err) {
             res.send({'error':'An error has occurred'});
@@ -11,7 +13,7 @@ exports.listAllDevices = function(app, db, req, res) {
     });
 };
 
-exports.addDevice = function(app, db, req, res) {
+exports.addDevice = function(api, db, req, res) {
     var device = { mid: functions.generateMID(config.midLength), name: req.body.name, alias: req.body.alias, ip: req.body.ip, status: req.body.status, value: req.body.value, additional: req.body.additional, time: new Date().toJSON() };
 
     for(var key in device) {
@@ -19,10 +21,12 @@ exports.addDevice = function(app, db, req, res) {
             device[key] = null;
     }
 
-    if(device.name == null || device.ip == null) {
-        res.send({ ok: 0, error: "You didn't specify a name or an IP for the device." });
+    if(device.name == null) {
+        res.send({ ok: 0, error: 'You didn\'t specify a name for the device.' });
         return;
     }
+
+    device.ip = (device.ip == null ? req.ip : device.ip);
 
     device.additional = (device.additional == null ? {} : JSON.parse(device.additional));
 
@@ -35,7 +39,7 @@ exports.addDevice = function(app, db, req, res) {
     });
 };
 
-exports.showDevice = function(app, db, req, res) {
+exports.showDevice = function(api, db, req, res) {
     const details = { 'mid': req.params.mid };
 
     db.collection('device').findOne(details, (err, result) => {
@@ -50,7 +54,7 @@ exports.showDevice = function(app, db, req, res) {
     });
 };
 
-exports.removeDevice = function(app, db, req, res) {
+exports.removeDevice = function(api, db, req, res) {
     const details = { 'mid': req.params.mid };
 
     db.collection('device').findOne(details, (err, result) => {
@@ -75,7 +79,7 @@ exports.removeDevice = function(app, db, req, res) {
     });
 };
 
-exports.updateDevice = function(app, db, req, res) {
+exports.updateDevice = function(api, db, req, res) {
     const details = { 'mid': req.params.mid };
 
     db.collection('device').findOne(details, (err, result) => {
@@ -92,7 +96,7 @@ exports.updateDevice = function(app, db, req, res) {
 
             for(var key in newData) {
                 if(newData[key] == undefined || newData[key] == '') {
-                    if(key != "additional")
+                    if(key != 'additional')
                         newData[key] = currDevice[key];
                     else
                         newData[key] = JSON.stringify(currDevice[key]);

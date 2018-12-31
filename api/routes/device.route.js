@@ -1,23 +1,23 @@
 const controller = require("../controllers/device.controller");
 
-module.exports = function(app, db) {
-    app.get('/device', (req, res) => {
-        controller.listAllDevices(app, db, req, res);
+module.exports = function(api, db) {
+    api.get('/device', (req, res) => {
+        controller.listAllDevices(api, db, req, res);
     });
 
-    app.post('/device', (req, res) => {
-        controller.addDevice(app, db, req, res);
+    api.post('/device', (req, res) => {
+        controller.addDevice(api, db, req, res);
     });
 
-    app.get('/device/:mid', (req, res) => {
-        controller.showDevice(app, db, req, res);
+    api.get('/device/:mid', (req, res) => {
+        controller.showDevice(api, db, req, res);
     });
 
-    app.delete('/device/:mid', (req, res) => {
-        controller.removeDevice(app, db, req, res);
+    api.delete('/device/:mid', (req, res) => {
+        controller.removeDevice(api, db, req, res);
     });
 
-    app.put('/device/:mid', (req, res) => {
-        controller.updateDevice(app, db, req, res);
+    api.put('/device/:mid', (req, res) => {
+        controller.updateDevice(api, db, req, res);
     });
 };

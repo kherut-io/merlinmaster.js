@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const winston = require('winston');
 const ip = require('ip');
 const path = require('path');
-const requestIp = require('request-ip');
 
 //CONFIG
 const config = require('./config.json');
@@ -45,20 +44,18 @@ const localIp = ip.address();
 //SET UP API AND WEBSERVER
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(logMiddleware);
-api.use(requestIp.mw());
 
 webserver.use(express.static(path.join(__dirname, 'www/views'))); 
 webserver.engine('.ejs', require('ejs').__express);
 webserver.set('views', path.join(__dirname, 'www/views'));
 webserver.set('view engine', 'ejs');
-webserver.use(requestIp.mw());
 
 webserver.get('/favicon.ico' , function(req , res) {
     //HANDLE FAVICON
 });
 
 webserver.get('*', function(req, res) {
-    res.render(path.join(__dirname, 'www/views') + req.url, { localIp: localIp, clientIp: req.clientIp.split(':')[3] });
+    res.render(path.join(__dirname, 'www/views') + req.url, { localIp: localIp, clientIp: req.ip });
 });
 
 //CONNECT TO MONGODB

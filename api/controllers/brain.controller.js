@@ -1,8 +1,8 @@
-exports.printAllData = function(app, db, req, res) {
+exports.printAllData = function(api, db, req, res) {
     res.send(getData(["temperatureCPU", "uptime, cpuinfo"]));
 };
 
-exports.printData = function(app, db, req, res) {
+exports.printData = function(api, db, req, res) {
     res.send(getData([req.params.info]));
 };
 
