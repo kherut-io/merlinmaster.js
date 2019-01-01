@@ -1,0 +1,49 @@
+nav.menu::before {
+    content: "";
+    display: block;
+    width: 276px;
+    height: 1px;
+    background: white;
+    position: absolute;
+    left: calc(50% - 138px);
+    margin-top: -14px;
+}
+
+nav.menu {
+    margin-top: 32px;
+}
+
+nav.menu::after {
+    content: "";
+    display: block;
+    width: 160px;
+    height: 1px;
+    background: white;
+    position: absolute;
+    left: calc(50% - 80px);
+    margin-top: 16px;
+}
+
+nav.menu a {
+    text-decoration: none;
+    color: white;
+    font-family: "Lane", monospace;
+    font-size: 24px;
+    letter-spacing: 1px;
+    margin: 0 10px;
+    cursor: pointer;
+    border-top: solid 1px transparent;
+    border-bottom: solid 1px transparent;
+    padding: 3px;
+    transition: all 0.2s ease-in-out;
+}
+
+nav.menu a.disabled {
+    color: #555555;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+nav.menu a:hover {
+    border-color: white;
+}

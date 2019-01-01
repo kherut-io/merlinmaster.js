@@ -55,7 +55,7 @@ webserver.get('/favicon.ico' , function(req , res) {
 });
 
 webserver.get('*', function(req, res) {
-    res.render(path.join(__dirname, 'www/views') + req.url, { localIp: localIp, clientIp: req.ip });
+    res.render(path.join(__dirname, 'www/views') + req.url, { appPath: __dirname, config: config, theme: require(path.join(__dirname, 'www/views/themes/', config.theme, '/theme.json')) });
 });
 
 //CONNECT TO MONGODB
