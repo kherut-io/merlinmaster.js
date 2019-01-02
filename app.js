@@ -8,6 +8,7 @@ const path = require('path');
 
 //CONFIG
 const config = require('./config.json');
+const mongoConfig = require('./mongoConfig.json');
 
 //LOGGING
 const logger = winston.createLogger({
@@ -50,7 +51,7 @@ webserver.engine('.ejs', require('ejs').__express);
 webserver.set('views', path.join(__dirname, 'www/views'));
 webserver.set('view engine', 'ejs');
 
-webserver.get('/favicon.ico' , function(req , res) {
+webserver.get('/favicon.ico' , function(req, res) {
     //HANDLE FAVICON
 });
 
@@ -59,7 +60,7 @@ webserver.get('*', function(req, res) {
 });
 
 //CONNECT TO MONGODB
-MongoClient.connect(config.mongoAddress, (err, database) => {
+MongoClient.connect(mongoConfig.address, (err, database) => {
     //COULDN'T CONNECT TO MONGODB
     if (err) {
         logger.error(err);
@@ -67,7 +68,7 @@ MongoClient.connect(config.mongoAddress, (err, database) => {
     }
 
     //GET ALL THE ROUTES FOR THE API
-    require('./api/routes')(api, database);
+    require('./api/routes')(api, webserver, database);
 
     //MAKE THE API LISTEN ON apiPort
     api.listen(apiPort, () => {

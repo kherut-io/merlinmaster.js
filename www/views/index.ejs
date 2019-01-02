@@ -4,7 +4,8 @@
         <title>Merlin</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <%- include(appPath + '/www/views/themes/' + theme.name + '/includes.ejs') %>
+        <%- include(appPath + '/www/views/themes/' + theme.nameRaw + '/includes.ejs') %>
+        <%- include('./includes.ejs') %>
     </head>
     <body>
         <% include header.ejs %>

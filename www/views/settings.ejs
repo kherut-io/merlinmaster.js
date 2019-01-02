@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Merlin</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <%- include(appPath + '/www/views/themes/' + theme.nameRaw + '/includes.ejs') %>
+        <%- include('./includes.ejs') %>
+    </head>
+    <body>
+        <% include header.ejs %>
+        <div class="container">
+            <div class="settings"></div>
+        </div>
+        <script>
+            var config = JSON.parse(he.decode('<%= JSON.stringify(config) %>'));
+            var useQuote = false;
+            var inputType = 'text';
+            var html = '';
+
+            html += '<h1 class="title">config.json</h1>{<br>';
+
+            for(var key in config) {
+                switch(typeof config[key]) {
+                    case 'number':
+                        useQuote = false;
+                        inputType = 'number';
+                        break;
+                    case 'string':
+                        useQuote = true;
+                        inputType = 'text'
+                        break;
+                }
+
+                //VALUE AS NORMAL TEXT
+                //html += '<span class="key">"' + key + '"</span>: ' + (useQuote ? '"' : '') + '<span class="value" data-input-type="' + inputType + '">' + config[key] + '</span>' + (useQuote ? '"' : '') + ',<br>';
+
+                //VALUE AS INPUT
+                html += '<span class="key">"' + key + '"</span>: ' + (useQuote ? '"' : '') + '<input class="value" type="' + inputType + '" value="' + config[key] + '">' + (useQuote ? '"' : '') + ',<br>';
+            }
+
+            html = html.substring(0, html.length - 5);
+            html += '<br>}<button class="save-button">Save</button>';
+
+            $('.settings').append(html);
+
+            $('.settings .value').each(function() {
+                if($(this).attr('type') == 'text')
+                    $(this).css('width', $(this).val().length * 12 + 4);
+                else if($(this).attr('type') == 'number')
+                    $(this).css('width', $(this).val().toString().length * 12 + 18);
+            });
+
+            $('.settings').on('keyup change', '.value', function() {
+                if($(this).attr('type') == 'text')
+                    $(this).css('width', $(this).val().length * 12 + 4);
+                else if($(this).attr('type') == 'number')
+                    $(this).css('width', $(this).val().toString().length * 12 + 18);
+            });
+
+            $('.settings').on('click', '.key', function() {
+                $(this).next().focus();
+            });
+
+            $('.settings').on('click', '.save-button', function() {
+                var changes = '';
+
+                $('.settings .key').each(function() {
+                    var key = $(this).text();
+                    key = key.substring(1, key.length);
+                    key = key.substring(0, key.length - 1);
+
+                    var oldVal = config[key];
+                    var newVal = $(this).next().val();
+
+                    if(oldVal != newVal)
+                        changes += '<i>' + key + '</i>: ' + oldVal + ' &rarr; ' + newVal + '<br>';
+                });
+
+                var mModal = new modal({
+                    title: 'Save settings?',
+                    text: changes,
+                    buttons: ['Confirm', 'Cancel'],
+                });
+
+                mModal.buttonsFunctions= [
+                    function() {
+                        console.log(changes);
+                        mModal.close();
+
+                        setTimeout(function() { new modal({ title: 'Please wait.', text: 'Merlin is being rebooted now. Wait a few seconds and try refreshing this page.', centerContent: true, closeButtonVisible: false }).show(); }, 500);
+                    },
+                    function() { mModal.close(); }
+                ];
+
+                if(changes != '')
+                    mModal.show();
+                else
+                    new modal({ title: 'Alert', text: 'You haven\'t made any changes.' }).show();
+            });
+        </script>
+    </body>
+</html>
