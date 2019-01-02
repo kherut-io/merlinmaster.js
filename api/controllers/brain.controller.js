@@ -6,19 +6,22 @@ exports.printData = function(api, db, req, res) {
     res.send(getData([req.params.info]));
 };
 
-exports.restart = function(api, webserver, db, req, res) {
-    api.webserver.close();
-    webserver.webserver.close();
-
-    console.log("Creating child process...");
-
-    var cmd = 'node app.js';  
-    var exec = require('child_process').exec;
+exports.settings = function(api, db, req, res) {
+    //IT DOESN"T WRITE TO FILE - WHY?
+    var fs = require('fs');
+    var fileName = '../../config.json';
+    var file = require(fileName);
+    var stream = fs.createWriteStream(fileName);
     
-    exec(cmd, function() {
-        console.log("Killing process...");
+    stream.once('open', function(fd) {
+        for(var key in req.body)
+            file[key] = (typeof file[key] == 'number' ? parseInt(req.body[key]) : req.body[key]); 
 
-        process.kill();
+        console.log(JSON.stringify(file, null, 2));
+        stream.write(JSON.stringify(file, null, 2));
+    
+        res.end();
+        stream.end();
     });
 };
 

@@ -1,6 +1,6 @@
 const controller = require("../controllers/brain.controller");
 
-module.exports = function(api, webserver, db) {
+module.exports = function(api, db) {
     api.get('/brain', (req, res) => {
         controller.printAllData(api, db, req, res);
     });
@@ -9,10 +9,7 @@ module.exports = function(api, webserver, db) {
         controller.printData(api, db, req, res);
     });
 
-    //RESTARTS MERLIN
-    api.get('/brain/restart', (req, res) => {
-        console.log("Route");
-
-        controller.restart(api, webserver, db, req, res);
+    api.put('/brain/settings', (req, res) => {
+        controller.settings(api, db, req, res);
     });
 };

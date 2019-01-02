@@ -56,7 +56,7 @@ webserver.get('/favicon.ico' , function(req, res) {
 });
 
 webserver.get('*', function(req, res) {
-    res.render(path.join(__dirname, 'www/views') + req.url, { appPath: __dirname, config: config, theme: require(path.join(__dirname, 'www/views/themes/', config.theme, '/theme.json')) });
+    res.render(path.join(__dirname, 'www/views') + req.url, { appPath: __dirname, config: config, theme: require(path.join(__dirname, 'www/views/themes/', config.theme, '/theme.json')), localIp: localIp });
 });
 
 //CONNECT TO MONGODB
@@ -68,7 +68,7 @@ MongoClient.connect(mongoConfig.address, (err, database) => {
     }
 
     //GET ALL THE ROUTES FOR THE API
-    require('./api/routes')(api, webserver, database);
+    require('./api/routes')(api, database);
 
     //MAKE THE API LISTEN ON apiPort
     api.listen(apiPort, () => {

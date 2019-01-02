@@ -64,6 +64,7 @@
 
             $('.settings').on('click', '.save-button', function() {
                 var changes = '';
+                var data = Object();
 
                 $('.settings .key').each(function() {
                     var key = $(this).text();
@@ -73,8 +74,11 @@
                     var oldVal = config[key];
                     var newVal = $(this).next().val();
 
-                    if(oldVal != newVal)
+                    if(oldVal != newVal) {
                         changes += '<i>' + key + '</i>: ' + oldVal + ' &rarr; ' + newVal + '<br>';
+
+                        data[key] = newVal;
+                    }
                 });
 
                 var mModal = new modal({
@@ -88,7 +92,21 @@
                         console.log(changes);
                         mModal.close();
 
-                        setTimeout(function() { new modal({ title: 'Please wait.', text: 'Merlin is being rebooted now. Wait a few seconds and try refreshing this page.', centerContent: true, closeButtonVisible: false }).show(); }, 500);
+                        console.log('http://<%= localIp %>:' + config.apiPort + '/brain/settings');
+
+                        setTimeout(function() { 
+                            $.ajax({
+                                url: 'http://<%= localIp %>:' + config.apiPort + '/brain/settings',
+                                type: 'PUT',
+                                data: data,
+                                success: function(result) {
+                                    new modal({ title: 'Please wait.', text: 'Merlin is being rebooted now. Wait a few seconds and try refreshing this page.', centerContent: true, closeButtonVisible: false }).show();
+                                },
+                                error: function(result) {
+                                    new modal({ title: 'Oh no!', text: 'There was an error while sending the request.', centerContent: true }).show();
+                                }
+                            });
+                        }, 500);
                     },
                     function() { mModal.close(); }
                 ];
@@ -96,7 +114,7 @@
                 if(changes != '')
                     mModal.show();
                 else
-                    new modal({ title: 'Alert', text: 'You haven\'t made any changes.' }).show();
+                    new modal({ title: 'Grrr!', text: 'You haven\'t made any changes.' }).show();
             });
         </script>
     </body>
