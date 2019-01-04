@@ -1,0 +1,58 @@
+.container .settings {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 20px;
+    padding: 30px;
+    padding-top: 4px;
+    padding-bottom: 18px;
+    border: 1px solid white;
+    display: inline-block;
+    text-align: left;
+    color: white;
+}
+
+.container .settings .title {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: lighter;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.container .settings .key {
+    font-style: italic;
+    margin-left: 30px;
+}
+
+.container .settings .value {
+    font-size: 20px;
+    font-family: 'Roboto Mono', monospace;
+    outline: none;
+    border: none;
+    border-bottom: solid 1px transparent;
+    background: transparent;
+    color: white;
+}
+
+.container .settings .value:focus {
+    border-bottom-color: white;
+}
+
+.container .settings .save-button {
+    background: transparent;
+    color: white;
+    font-size: 26px;
+    font-family: 'Roboto Mono', monospace;
+    border: 1px solid white;
+    outline: none;
+    padding: 10px 30px;
+    display: block;
+    margin: auto;
+    margin-top: 18px;
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+}
+
+.container .settings .save-button:hover {
+    background: white;
+    color: black;
+}
