@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const winston = require('winston');
 const ip = require('ip');
 const path = require('path');
+const cors = require('cors')
 
 //CONFIG
 const config = require('./config.json');
@@ -45,6 +46,7 @@ const localIp = ip.address();
 //SET UP API AND WEBSERVER
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(logMiddleware);
+api.use(cors());
 
 webserver.use(express.static(path.join(__dirname, 'www/views'))); 
 webserver.engine('.ejs', require('ejs').__express);
@@ -72,11 +74,11 @@ MongoClient.connect(mongoConfig.address, (err, database) => {
 
     //MAKE THE API LISTEN ON apiPort
     api.listen(apiPort, () => {
-        logger.info('API on ' + localIp + ':' + apiPort);
+        logger.info('API on http://' + localIp + ':' + apiPort);
 
         //CREATE WEBSERVER ON httpPort -> SERVES www/views
         webserver.listen(httpPort, () => {
-            logger.info('HTTP on ' + localIp + ':' + httpPort);
+            logger.info('Control panel on http://' + localIp + ':' + httpPort);
         });
     });               
 })

@@ -61,6 +61,11 @@
     transition: 0.3s all ease-in-out;
 }
 
+.modal-button:hover {
+    background: black;
+    color: white;
+}
+
 .modal-button:not(:last-child) {
     margin-right: 10px;
 }
@@ -73,4 +78,8 @@
     width: 100%;
     display: inline-block;
     text-align: center;
+}
+
+.modal pre {
+    text-align: left;
 }

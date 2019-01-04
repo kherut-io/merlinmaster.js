@@ -7,22 +7,23 @@ exports.printData = function(api, db, req, res) {
 };
 
 exports.settings = function(api, db, req, res) {
-    //IT DOESN"T WRITE TO FILE - WHY?
     var fs = require('fs');
-    var fileName = '../../config.json';
-    var file = require(fileName);
-    var stream = fs.createWriteStream(fileName);
-    
-    stream.once('open', function(fd) {
-        for(var key in req.body)
-            file[key] = (typeof file[key] == 'number' ? parseInt(req.body[key]) : req.body[key]); 
+    var configFRead = '../../config.json';
+    var configFWrite = './config.json';
+    var config = require(configFRead);
 
-        console.log(JSON.stringify(file, null, 2));
-        stream.write(JSON.stringify(file, null, 2));
-    
-        res.end();
-        stream.end();
-    });
+    for(var key in req.body)
+        config[key] = (typeof config[key] == 'number' ? parseInt(req.body[key]) : req.body[key]); 
+
+    fs.writeFile(configFWrite, JSON.stringify(config, null, 2), function(err) {
+        if(err) {
+            res.send({ ok: 0, error: err });
+            return;
+        }
+
+        else
+            res.send({ ok: 1 });
+    }); 
 };
 
 function getData(info) {
