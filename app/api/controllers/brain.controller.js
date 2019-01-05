@@ -8,8 +8,8 @@ exports.printData = function(api, db, req, res) {
 
 exports.settings = function(api, db, req, res) {
     var fs = require('fs');
-    var configFRead = '../../config.json';
-    var configFWrite = './config.json';
+    var configFRead = '../../../config/config.json';
+    var configFWrite = './config/config.json';
     var config = require(configFRead);
 
     for(var key in req.body)

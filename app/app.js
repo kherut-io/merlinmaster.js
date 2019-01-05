@@ -8,8 +8,8 @@ const path = require('path');
 const cors = require('cors')
 
 //CONFIG
-const config = require('./config.json');
-const mongoConfig = require('./mongoConfig.json');
+const config = require('../config/config.json');
+const mongoConfig = require('../config/mongoConfig.json');
 
 //LOGGING
 const logger = winston.createLogger({

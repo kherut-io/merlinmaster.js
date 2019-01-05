@@ -1,0 +1,7 @@
+{
+  "environment": "development",
+  "apiPort": 3000,
+  "httpPort": 8000,
+  "midLength": 4,
+  "theme": "merlin-dark"
+}

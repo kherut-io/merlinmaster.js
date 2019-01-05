@@ -17,6 +17,8 @@
             var useQuote = false;
             var inputType = 'text';
             var html = '';
+            var settingsChanged = {};
+            var settingsChangedT = '';
 
             html += '<h1 class="title">config.json</h1>{<br>';
 
@@ -63,8 +65,8 @@
             });
 
             $('.settings').on('click', '.save-button', function() {
-                var changes = '';
-                var data = Object();
+                settingsChanged = {};
+                settingsChangedT = '';
 
                 $('.settings .key').each(function() {
                     var key = $(this).text();
@@ -75,21 +77,28 @@
                     var newVal = $(this).next().val();
 
                     if(oldVal != newVal) {
-                        changes += '<i>' + key + '</i>: ' + oldVal + ' &rarr; ' + newVal + '<br>';
+                        console.log(oldVal + ' != ' + newVal);
 
-                        data[key] = newVal;
+                        settingsChangedT += '<i>' + key + '</i>: ' + oldVal + ' &rarr; ' + newVal + '<br>';
+
+                        console.log(settingsChangedT);
+
+                        settingsChanged[key] = newVal;
+
+                        console.log(settingsChanged);
+                        console.log();
                     }
                 });
 
                 var mModal = new modal({
                     title: 'Save settings?',
-                    text: changes,
+                    text: settingsChangedT,
                     buttons: ['Confirm', 'Cancel'],
                 });
 
-                mModal.buttonsFunctions= [
+                mModal.buttonsFunctions = [
                     function() {
-                        console.log(changes);
+                        console.log(settingsChanged);
                         mModal.close();
 
                         console.log('http://<%= localIp %>:' + config.apiPort + '/brain/settings');
@@ -98,7 +107,7 @@
                             $.ajax({
                                 url: 'http://<%= localIp %>:' + config.apiPort + '/brain/settings',
                                 method: 'PUT',
-                                data: data,
+                                data: settingsChanged,
                                 success: function(result) {
                                     new modal({ title: 'Please wait.', text: 'Merlin is being rebooted now. Wait a few seconds and try refreshing this page.', centerContent: true, closeButtonVisible: false }).show();
                                 },
@@ -111,8 +120,9 @@
                     function() { mModal.close(); }
                 ];
 
-                if(changes != '')
+                if(settingsChangedT != '')
                     mModal.show();
+
                 else
                     new modal({ title: 'Grrr!', text: 'You haven\'t made any changes.' }).show();
             });

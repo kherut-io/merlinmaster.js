@@ -1,4 +1,4 @@
 node_modules/
-log/combined.log
-log/error.log
-mongoConfig.json
+logs/combined.log
+logs/error.log
+config/mongoConfig.json

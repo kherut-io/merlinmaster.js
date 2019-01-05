@@ -25,12 +25,13 @@ nav.menu::after {
 }
 
 nav.menu a {
+    display: inline-block;
     text-decoration: none;
     color: white;
     font-family: "Lane", monospace;
     font-size: 24px;
     letter-spacing: 1px;
-    margin: 0 10px;
+    margin: 3px 10px;
     cursor: pointer;
     border-top: solid 1px transparent;
     border-bottom: solid 1px transparent;

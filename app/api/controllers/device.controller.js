@@ -1,6 +1,6 @@
 const requestIp = require('request-ip');
 
-const config = require('../../config.json');
+const config = require('../../../config/config.json');
 const functions = require('../../functions');
 
 exports.listAllDevices = function(api, db, req, res) {
