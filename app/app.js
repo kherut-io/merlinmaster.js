@@ -8,8 +8,7 @@ const path = require('path');
 const cors = require('cors')
 
 //CONFIG
-const config = require('../config/config.json');
-const mongoConfig = require('../config/mongoConfig.json');
+const config = require('../config')(true);
 
 //LOGGING
 const logger = winston.createLogger({
@@ -58,11 +57,11 @@ webserver.get('/favicon.ico' , function(req, res) {
 });
 
 webserver.get('*', function(req, res) {
-    res.render(path.join(__dirname, 'www/views') + req.url, { appPath: __dirname, config: config, theme: require(path.join(__dirname, 'www/views/themes/', config.theme, '/theme.json')), localIp: localIp });
+    res.render(path.join(__dirname, 'www/views') + req.url, { appPath: __dirname, config: require('../config')(false), theme: require(path.join(__dirname, 'www/views/themes/', config.theme, '/theme.json')), localIp: localIp });
 });
 
 //CONNECT TO MONGODB
-MongoClient.connect(mongoConfig.address, (err, database) => {
+MongoClient.connect(config.mongo.address, (err, database) => {
     //COULDN'T CONNECT TO MONGODB
     if (err) {
         logger.error(err);
