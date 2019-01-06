@@ -14,36 +14,54 @@
         </div>
         <script>
             var config = JSON.parse(he.decode('<%= JSON.stringify(config) %>'));
-            var useQuote = false;
-            var inputType = 'text';
+
             var html = '';
             var settingsChanged = {};
             var settingsChangedT = '';
 
             html += '<h1 class="title">config.json</h1>{<br>';
 
-            for(var key in config) {
-                switch(typeof config[key]) {
-                    case 'number':
-                        useQuote = false;
-                        inputType = 'number';
-                        break;
-                    case 'string':
-                        useQuote = true;
-                        inputType = 'text'
-                        break;
+            function htmlRecursively(object) {
+                var htmlReturn = '';
+                var inputHTML = '';
+                var useQuote = false;
+
+                for(var key in object) {
+                    switch(typeof object[key]) {
+                        case 'number':
+                            useQuote = false;
+                            inputHTML = '<input class="value" type="number" value="' + object[key] + '">';
+                            break;
+                        case 'string':
+                            useQuote = true;
+                            inputHTML = '<input class="value" type="text" spellcheck="false" value="' + object[key] + '">';
+                            break;
+                        case 'object':
+                            useQuote = false;
+
+                            if(Object.keys(object[key]) > 0) {
+                                inputHTML = '{<br>';
+                                inputHTML += htmlRecursively(object[key]);
+                                inputHTML += '<br>}';
+                            }
+
+                            else
+                                inputHTML = '{}';
+                            
+                            break;
+                    }
+
+                    htmlReturn += '<span class="key">"' + key + '"</span>: ' + (useQuote ? '"' : '') + inputHTML + (useQuote ? '"' : '') + ',<br>';
                 }
+                
+                htmlReturn = htmlReturn.substring(0, htmlReturn.length - 5);
 
-                //VALUE AS NORMAL TEXT
-                //html += '<span class="key">"' + key + '"</span>: ' + (useQuote ? '"' : '') + '<span class="value" data-input-type="' + inputType + '">' + config[key] + '</span>' + (useQuote ? '"' : '') + ',<br>';
-
-                //VALUE AS INPUT
-                html += '<span class="key">"' + key + '"</span>: ' + (useQuote ? '"' : '') + '<input class="value" type="' + inputType + '" value="' + config[key] + '">' + (useQuote ? '"' : '') + ',<br>';
+                return htmlReturn;
             }
+            
+            html += htmlRecursively(config);
 
-            html = html.substring(0, html.length - 5);
             html += '<br>}<button class="save-button">Save</button>';
-
             $('.settings').append(html);
 
             $('.settings .value').each(function() {

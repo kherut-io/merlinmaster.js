@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const winston = require('winston');
 const ip = require('ip');
 const path = require('path');
-const cors = require('cors')
+const cors = require('cors');
 
 //CONFIG
 const config = require('../config')(true);
