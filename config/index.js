@@ -1,26 +1,23 @@
-const config = require('./config.json');
-const mongoConfig = require('./mongo.config.json');
+const glob = require('glob');
+const path = require('path');
+
+const root = path.resolve(path.dirname(require.main.filename), '..');
 
 module.exports = function(secret = false) {
-    var configClone = JSON.parse(JSON.stringify(config)); //BECAUSE THE BEST SOLUTIONS ARE THE SIMPLEST
-    var mongoConfigClone = JSON.parse(JSON.stringify(mongoConfig));
+    var config = JSON.parse(JSON.stringify(require(root + '/config/config.json')));
+    var configSeparate = glob.sync(root + '/config/*.config.json');
 
-    configClone['mongo'] = mongoConfigClone;
+    for(var i = 0; i < configSeparate.length; i++)
+        config[path.basename(configSeparate[i]).split('.config.json')[0]] = JSON.parse(JSON.stringify(require('./' + path.basename(configSeparate[i]))));
 
-    return eachRecursive(configClone, secret);
+    return eachRecursive(config, secret);
 };
 
 function eachRecursive(obj, secret)
 {
     for (var key in obj) {
-        if(key[0] == '_') {
-            if(secret) {
-                obj[key.substring(1, key.length)] = obj[key];
-            }
-                
+        if(key[0] == '_' && !secret) {
             delete obj[key];
-
-            key = key.substring(1, key.length);
         }
 
         if (typeof obj[key] == 'object' && obj[key] !== null)

@@ -7,6 +7,7 @@
     border: 1px solid black;
     display: inline-block;
     text-align: left;
+    color: black;
 }
 
 .container .settings .title {
@@ -17,27 +18,21 @@
     margin-bottom: 18px;
 }
 
-.container .settings .key {
-    font-style: italic;
-    margin-left: 30px;
-}
-
-.container .settings .value {
-    font-size: 20px;
-    font-family: 'Roboto Mono', monospace;
+.container .settings .content {
     outline: none;
-    border: none;
-    border-bottom: solid 1px transparent;
-}
-
-.container .settings .value:focus {
-    border-bottom-color: black;
+    border: solid 1px black;
+    color: black;
+    background: transparent;
+    min-width: 350px;
+    min-height: 185px;
+    white-space: nowrap;
+    overflow: auto;
 }
 
 .container .settings .save-button {
-    background: white;
+    background: transparent;
     color: black;
-    font-size: 26px;
+    font-size: 22px;
     font-family: 'Roboto Mono', monospace;
     border: 1px solid black;
     outline: none;

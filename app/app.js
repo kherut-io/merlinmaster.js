@@ -10,6 +10,9 @@ const cors = require('cors');
 //CONFIG
 const config = require('../config')(true);
 
+//PROJECT ROOT
+const root = path.resolve(path.dirname(require.main.filename), '..');
+
 //LOGGING
 const logger = winston.createLogger({
     level: 'info',
@@ -19,8 +22,8 @@ const logger = winston.createLogger({
     ),
     defaultMeta: {service: 'user-service'},
     transports: [
-        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/combined.log' })
+        new winston.transports.File({ filename: root + '/logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: root + '/logs/combined.log' })
     ]
 });
 
@@ -47,9 +50,9 @@ api.use(bodyParser.urlencoded({ extended: true }));
 api.use(logMiddleware);
 api.use(cors());
 
-webserver.use(express.static(path.join(__dirname, 'www/views'))); 
+webserver.use(express.static(path.join(root, '/app/www/views'))); 
 webserver.engine('.ejs', require('ejs').__express);
-webserver.set('views', path.join(__dirname, 'www/views'));
+webserver.set('views', path.join(root, '/app/www/views'));
 webserver.set('view engine', 'ejs');
 
 webserver.get('/favicon.ico' , function(req, res) {
@@ -57,11 +60,12 @@ webserver.get('/favicon.ico' , function(req, res) {
 });
 
 webserver.get('*', function(req, res) {
-    res.render(path.join(__dirname, 'www/views') + req.url, { appPath: __dirname, config: require('../config')(false), theme: require(path.join(__dirname, 'www/views/themes/', config.theme, '/theme.json')), localIp: localIp });
+    //WE'RE PASSING FULL CONFIG EVEN IF THE USER DOESN'T HAVE ENOUGH PERMISSIONS <- I'm gonna handle it with Merlin Master and Passport.js in a few commits
+    res.render(root + '/app/www/views/' + req.url, { appPath: __dirname, config: require(root + '/config')(true), theme: require(root + '/app/www/views/themes/' + config.theme + '/theme.json'), localIp: localIp });
 });
 
 //CONNECT TO MONGODB
-MongoClient.connect(config.mongo.address, (err, database) => {
+MongoClient.connect(config.mongo._address, (err, database) => {
     //COULDN'T CONNECT TO MONGODB
     if (err) {
         logger.error(err);
@@ -69,7 +73,7 @@ MongoClient.connect(config.mongo.address, (err, database) => {
     }
 
     //GET ALL THE ROUTES FOR THE API
-    require('./api/routes')(api, database);
+    require(root + '/app/api/routes')(api, database);
 
     //MAKE THE API LISTEN ON apiPort
     api.listen(apiPort, () => {

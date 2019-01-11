@@ -13,102 +13,61 @@
             <div class="settings"></div>
         </div>
         <script>
-            var config = JSON.parse(he.decode('<%= JSON.stringify(config) %>'));
-
-            var html = '';
-            var settingsChanged = {};
-            var settingsChangedT = '';
-
-            html += '<h1 class="title">config.json</h1>{<br>';
-
-            function htmlRecursively(object) {
-                var htmlReturn = '';
-                var inputHTML = '';
-                var useQuote = false;
-
-                for(var key in object) {
-                    switch(typeof object[key]) {
-                        case 'number':
-                            useQuote = false;
-                            inputHTML = '<input class="value" type="number" value="' + object[key] + '">';
-                            break;
-                        case 'string':
-                            useQuote = true;
-                            inputHTML = '<input class="value" type="text" spellcheck="false" value="' + object[key] + '">';
-                            break;
-                        case 'object':
-                            useQuote = false;
-
-                            if(Object.keys(object[key]) > 0) {
-                                inputHTML = '{<br>';
-                                inputHTML += htmlRecursively(object[key]);
-                                inputHTML += '<br>}';
-                            }
-
-                            else
-                                inputHTML = '{}';
-                            
-                            break;
-                    }
-
-                    htmlReturn += '<span class="key">"' + key + '"</span>: ' + (useQuote ? '"' : '') + inputHTML + (useQuote ? '"' : '') + ',<br>';
+            function validJSON(string) {
+                try {
+                    JSON.parse(string);
+                } catch (e) {
+                    return false;
                 }
-                
-                htmlReturn = htmlReturn.substring(0, htmlReturn.length - 5);
-
-                return htmlReturn;
+                return true;
             }
-            
-            html += htmlRecursively(config);
 
-            html += '<br>}<button class="save-button">Save</button>';
+            var config = JSON.parse(he.decode('<%= JSON.stringify(config) %>'));
+            var html = '';
+
+            html += '<h1 class="title">settings</h1><textarea class="content" spellcheck="false">';
+            html += JSON.stringify(config, null, 2);
+            html += '</textarea><button class="save-button">Save</button>';
+
             $('.settings').append(html);
 
-            $('.settings .value').each(function() {
-                if($(this).attr('type') == 'text')
-                    $(this).css('width', $(this).val().length * 12 + 4);
-                else if($(this).attr('type') == 'number')
-                    $(this).css('width', $(this).val().toString().length * 12 + 18);
-            });
-
-            $('.settings').on('keyup change', '.value', function() {
-                if($(this).attr('type') == 'text')
-                    $(this).css('width', $(this).val().length * 12 + 4);
-                else if($(this).attr('type') == 'number')
-                    $(this).css('width', $(this).val().toString().length * 12 + 18);
-            });
-
-            $('.settings').on('click', '.key', function() {
-                $(this).next().focus();
-            });
-
             $('.settings').on('click', '.save-button', function() {
-                settingsChanged = {};
-                settingsChangedT = '';
+                if(validJSON($('.settings .content').val())) {
+                    var mModal = new modal({
+                        title: 'Everything\'s fine.',
+                        text: 'Are you sure you want to update settings?',
+                        buttons: ['Confirm', 'Cancel'],
+                    });
 
-                $('.settings .key').each(function() {
-                    var key = $(this).text();
-                    key = key.substring(1, key.length);
-                    key = key.substring(0, key.length - 1);
+                    mModal.buttonsFunctions = [
+                        function() {
+                            mModal.close();
 
-                    var oldVal = config[key];
-                    var newVal = $(this).next().val();
+                            setTimeout(function() { 
+                                $.ajax({
+                                    url: 'http://<%= localIp %>:' + config.apiPort + '/brain/settings',
+                                    method: 'PUT',
+                                    data: {json: $('.settings .content').val()},
+                                    success: function(result) {
+                                        new modal({ title: 'Please wait.', text: 'Merlin is being rebooted now. Wait a few seconds and try refreshing this page.', centerContent: true, closeButtonVisible: false }).show();
+                                    },
+                                    error: function(result) {
+                                        new modal({ title: 'Oh no!', text: 'There was an error while sending the request.<br><br>Here it is:<pre>' + JSON.stringify(result, null, 2) + '</pre>', centerContent: true }).show();
+                                    }
+                                });
+                            }, 500);
+                        },
+                        function() { mModal.close(); }
+                    ];
 
-                    if(oldVal != newVal) {
-                        console.log(oldVal + ' != ' + newVal);
+                    mModal.show();
+                }
 
-                        settingsChangedT += '<i>' + key + '</i>: ' + oldVal + ' &rarr; ' + newVal + '<br>';
+                else
+                    new modal({ title: 'Oh no!', text: 'There\'s an error in your JSON file.' }).show();
+            });
 
-                        console.log(settingsChangedT);
-
-                        settingsChanged[key] = newVal;
-
-                        console.log(settingsChanged);
-                        console.log();
-                    }
-                });
-
-                var mModal = new modal({
+                /*var mModal = new modal({
                     title: 'Save settings?',
                     text: settingsChangedT,
                     buttons: ['Confirm', 'Cancel'],
@@ -143,7 +102,7 @@
 
                 else
                     new modal({ title: 'Grrr!', text: 'You haven\'t made any changes.' }).show();
-            });
+            });*/
         </script>
     </body>
 </html>

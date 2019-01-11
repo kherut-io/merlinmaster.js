@@ -18,29 +18,21 @@
     margin-bottom: 18px;
 }
 
-.container .settings .key {
-    font-style: italic;
-    margin-left: 30px;
-}
-
-.container .settings .value {
-    font-size: 20px;
-    font-family: 'Roboto Mono', monospace;
+.container .settings .content {
     outline: none;
-    border: none;
-    border-bottom: solid 1px transparent;
-    background: transparent;
+    border: solid 1px white;
     color: white;
-}
-
-.container .settings .value:focus {
-    border-bottom-color: white;
+    background: transparent;
+    min-width: 350px;
+    min-height: 185px;
+    white-space: nowrap;
+    overflow: auto;
 }
 
 .container .settings .save-button {
     background: transparent;
     color: white;
-    font-size: 26px;
+    font-size: 22px;
     font-family: 'Roboto Mono', monospace;
     border: 1px solid white;
     outline: none;

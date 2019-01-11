@@ -50,13 +50,14 @@
 .modal-button {
     background: transparent;
     color: white;
-    font-size: 26px;
+    font-size: 18px;
     font-family: 'Lane', monospace;
     border: 1px solid white;
     outline: none;
     padding: 10px 30px;
     display: inline-block;
     margin: auto;
+    margin-top: 30px;
     cursor: pointer;
     transition: 0.3s all ease-in-out;
 }
@@ -82,4 +83,8 @@
 
 .modal pre {
     text-align: left;
+    max-width: 400px;
+    max-height: 300px;
+    overflow: auto;
+    white-space: nowrap;
 }
