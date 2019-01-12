@@ -44,6 +44,7 @@ const webserver = express();
 const apiPort = process.env.API_PORT || config.apiPort;
 const httpPort = process.env.HTTP_PORT || config.httpPort;
 const localIp = ip.address();
+var wsMongoError;
 
 //SET UP API AND WEBSERVER
 api.use(bodyParser.urlencoded({ extended: true }));
@@ -69,9 +70,26 @@ MongoClient.connect(config.mongo._address, (err, database) => {
     //COULDN'T CONNECT TO MONGODB
     if (err) {
         logger.error(err);
-        process.exit(1);
-    }
+        
+        //FALLBACK WEBSERVER WHEN MONGO FAILS TO CONNECT
+        wsMongoError = express();
+    
+        wsMongoError.use(express.static(path.join(root, '/app/www/views'))); 
+        wsMongoError.engine('.ejs', require('ejs').__express);
+        wsMongoError.set('views', path.join(root, '/app/www/views'));
+        wsMongoError.set('view engine', 'ejs');
 
+        wsMongoError.get('/favicon.ico' , function(req, res) {});
+        wsMongoError.get('*', function(req, res) {
+            //WE'RE PASSING FULL CONFIG EVEN IF THE USER DOESN'T HAVE ENOUGH PERMISSIONS <- I'm gonna handle it with Merlin Master and Passport.js in a few commits
+            res.render(root + '/app/www/fallback/index', { appPath: __dirname, config: require(root + '/config')(true), theme: require(root + '/app/www/views/themes/' + config.theme + '/theme.json'), localIp: localIp });
+        });
+
+        wsMongoError.listen(httpPort, () => {
+            logger.info('Mongo config on http://' + localIp + ':' + httpPort);
+        });
+    }
+     
     //GET ALL THE ROUTES FOR THE API
     require(root + '/app/api/routes')(api, database);
 
@@ -79,9 +97,11 @@ MongoClient.connect(config.mongo._address, (err, database) => {
     api.listen(apiPort, () => {
         logger.info('API on http://' + localIp + ':' + apiPort);
 
-        //CREATE WEBSERVER ON httpPort -> SERVES www/views
-        webserver.listen(httpPort, () => {
-            logger.info('Control panel on http://' + localIp + ':' + httpPort);
-        });
+        if(typeof wsMongoError == 'undefined') {
+            //CREATE WEBSERVER ON httpPort -> SERVES www/views
+            webserver.listen(httpPort, () => {
+                logger.info('Control panel on http://' + localIp + ':' + httpPort);
+            });
+        }
     });               
 })

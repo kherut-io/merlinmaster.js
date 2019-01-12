@@ -6,3 +6,13 @@ header img {
     width: 120px;
     margin-top: 12px;
 }
+
+header .error {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: lighter;
+    font-size: 36px;
+    text-align: center;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    color: white;
+}
