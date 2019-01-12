@@ -4,6 +4,7 @@ const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const winston = require('winston');
 const ip = require('ip');
+const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 
@@ -44,7 +45,17 @@ const webserver = express();
 const apiPort = process.env.API_PORT || config.apiPort;
 const httpPort = process.env.HTTP_PORT || config.httpPort;
 const localIp = ip.address();
+var theme = config.theme;
 var wsMongoError;
+
+//DOES THEME EXIST?
+fs.access(root + '/app/www/views/themes/' + theme + '/theme.json', function(err) {
+    if(err) {
+        logger.error('No such theme as `' + theme + '`. Falling back to `merlin-light`.');
+
+        theme = 'merlin-light';
+    }
+});
 
 //SET UP API AND WEBSERVER
 api.use(bodyParser.urlencoded({ extended: true }));
@@ -62,7 +73,7 @@ webserver.get('/favicon.ico' , function(req, res) {
 
 webserver.get('*', function(req, res) {
     //WE'RE PASSING FULL CONFIG EVEN IF THE USER DOESN'T HAVE ENOUGH PERMISSIONS <- I'm gonna handle it with Merlin Master and Passport.js in a few commits
-    res.render(root + '/app/www/views/' + req.url, { appPath: __dirname, config: require(root + '/config')(true), theme: require(root + '/app/www/views/themes/' + config.theme + '/theme.json'), localIp: localIp });
+    res.render(root + '/app/www/views/' + req.url, { appPath: __dirname, config: require(root + '/config')(true), theme: require(root + '/app/www/views/themes/' + theme + '/theme.json'), localIp: localIp });
 });
 
 //CONNECT TO MONGODB
@@ -82,7 +93,7 @@ MongoClient.connect(config.mongo._address, (err, database) => {
         wsMongoError.get('/favicon.ico' , function(req, res) {});
         wsMongoError.get('*', function(req, res) {
             //WE'RE PASSING FULL CONFIG EVEN IF THE USER DOESN'T HAVE ENOUGH PERMISSIONS <- I'm gonna handle it with Merlin Master and Passport.js in a few commits
-            res.render(root + '/app/www/fallback/index', { appPath: __dirname, config: require(root + '/config')(true), theme: require(root + '/app/www/views/themes/' + config.theme + '/theme.json'), localIp: localIp });
+            res.render(root + '/app/www/fallback/index', { appPath: __dirname, config: require(root + '/config')(true), theme: require(root + '/app/www/views/themes/' + theme + '/theme.json'), localIp: localIp });
         });
 
         wsMongoError.listen(httpPort, () => {
