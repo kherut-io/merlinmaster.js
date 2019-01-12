@@ -52,8 +52,9 @@
                                         new modal({ title: 'Please wait.', text: 'Merlin is being rebooted now. Wait a few seconds and try refreshing this page.', centerContent: true, closeButtonVisible: false }).show();
                                     },
                                     error: function(result) {
-                                        new modal({ title: 'Oh no!', text: 'There was an error while sending the request.<br><br>Here it is:<pre>' + JSON.stringify(result, null, 2) + '</pre>', centerContent: true }).show();
-                                    }
+                                        new modal({ title: 'Oh no!', text: 'There was an error while sending the request.<br>It might have been due to timeout.<br>Check if API is up and running.', centerContent: true }).show();
+                                    },
+                                    timeout: config.requestTimeout
                                 });
                             }, 500);
                         },

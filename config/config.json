@@ -3,5 +3,6 @@
   "apiPort": 3000,
   "httpPort": 8000,
   "midLength": 4,
-  "theme": "merlin-dark"
+  "theme": "merlin-light",
+  "requestTimeout": 3000
 }
