@@ -1,8 +1,8 @@
 {
-  "name": "merlinbrain.js",
+  "name": "merlinmaster.js",
   "version": "0.1.0",
-  "description": "An open-source Merlin Brain client in JavaScript.",
-  "main": "app.js",
+  "description": "Fork of merlinbrain.js, but it's Merlin Master",
+  "main": "app/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app/app.js"
@@ -10,21 +10,22 @@
   "author": "Kherut.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kherut-io/merlinbrain.js.git"
+    "url": "git+https://github.com/kherut-io/merlinmaster.js.git"
   },
   "license": "GPL-3.0",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "cors": "^2.8.5",
-    "ejs": "^2.6.1",
+    "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
     "glob": "^7.1.3",
     "ip": "^1.1.5",
-    "mongodb": "^2.2.16",
+    "mongoose": "^5.4.4",
     "npm": "^6.5.0",
-    "path": "^0.12.7",
-    "request-ip": "^2.1.3",
-    "winston": "^3.1.0"
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^5.0.1",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"
