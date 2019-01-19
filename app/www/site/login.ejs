@@ -1,0 +1,41 @@
+<% if(typeof user != 'undefined') { %>
+    Redirecting...
+    <meta http-equiv="refresh" content="0; URL='/'" />
+<% } else { %>
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Merlin Master</title>
+
+            <%- include('./includes.ejs') %>
+        </head>
+        <body>
+            <h1>Log in</h1>
+            <div class='log-in-form'>
+                <input type="text" name="username" placeholder="Username...">
+                <input type="password" name="password" placeholder="Password...">
+                <input type="button" value="Log me in">
+            </div>
+        </body>
+    </html>
+    <script>
+        $('.log-in-form input[type="button"]').on('click', function() {
+            $.ajax({
+                url: '/<%= config.apiPrefix %>/auth/login',
+                method: 'POST',
+                data: { username: $('input[name="username"]').val(), password: $('input[name="password"]').val() },
+                success: function(result) {
+                    if(result.ok == 1)
+                        window.location.replace('<%= redirectURL %>');
+                    
+                    alert(result.message);
+                },
+                error: function(err) {
+                    alert(JSON.stringify(err));
+                },
+                timeout: 3000
+            });
+        });
+    </script>
+<% } %>

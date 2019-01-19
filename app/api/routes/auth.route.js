@@ -28,8 +28,13 @@ router.post('/login', (req, res) => {
 
     passport.authenticate('local', (err, user, info) => {
         req.login(user, (err) => {
-            if(err)
+            if(err) {
+                req.loggedIn = false;
+                
                 return res.send({ ok: 0, message: 'Wrong credentials :/', error: err });
+            }
+
+            req.loggedIn = true;
 
             res.send({ ok: 1, user: user });
         });
@@ -38,7 +43,7 @@ router.post('/login', (req, res) => {
 
 router.get('/logout', (req, res) => {
     if(typeof req.user == 'undefined')
-        return res.send({ ok: 0, message: 'You weren\'t logged in!' });
+        return res.send({ ok: 0, message: 'You aren\'t logged in!' });
 
     req.logout();
 
