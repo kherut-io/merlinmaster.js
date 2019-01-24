@@ -1,11 +1,17 @@
 const router = require('express').Router();
 const passport = require('passport');
+const path = require('path');
 
-var Account = require('../models/account.model');
+const root = path.resolve(path.dirname(require.main.filename), '..');
+
+const userProperties = require(root + '/app/functions/userProperties.function');
+const config = require(root + '/config')(true);
+
+var Account = require(root + '/app/api/models/account.model');
 
 router.post('/register', (req, res) => {
     if(typeof req.user != 'undefined')
-        return res.send({ ok: 0, message: 'Sorry m8, but you can\'t register a new account while logged in :c' });
+        return res.send({ ok: 0, message: 'Sorry m8, but you can\'t register a new account while being logged in :c' });
 
     Account.register(new Account({ username : req.body.username, email: req.body.email }), req.body.password, (err, account) => {
         if(err)
@@ -16,7 +22,7 @@ router.post('/register', (req, res) => {
                 if(err)
                     return next(err);
 
-                res.send({ ok: 1, user: account });
+                res.send({ ok: 1, user: userProperties(account, config.userProperties) });
             });
         });
     });
@@ -36,7 +42,7 @@ router.post('/login', (req, res) => {
 
             req.loggedIn = true;
 
-            res.send({ ok: 1, user: user });
+            res.send({ ok: 1, user: userProperties(user, config.userProperties) });
         });
     })(req, res);
 });

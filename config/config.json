@@ -1,5 +1,7 @@
 {
-  "_cookieKeys": ["bigchungusbigchungusbigchungus"],
+  "_sessionSecret": "bigchungusbigchungusbigchungus",
   "apiPrefix": "api",
-  "httpPort": 8000
+  "httpPort": 8000,
+  "userProperties": ["username", "email", "profiles"],
+  "defaultPrivileges": []
 }
