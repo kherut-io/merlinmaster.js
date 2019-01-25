@@ -22,7 +22,7 @@ var Account = new Schema({
             name: {
                 type: String
             },
-            PIN: {
+            pin: {
                 type: String
             },
             privileges: {

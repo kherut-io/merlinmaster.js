@@ -14,4 +14,8 @@ router.post('/profiles/new', (req, res) => {
     controller.newProfile(req, res);
 });
 
+router.get('/:property', (req, res) => {
+    controller.getUserData(req, res);      
+});
+
 module.exports = router;

@@ -4,7 +4,7 @@ const path = require('path');
 
 const root = path.resolve(path.dirname(require.main.filename), '..');
 
-const userProperties = require(root + '/app/functions/userProperties.function');
+const showProperties = require(root + '/app/functions/showProperties.function');
 const config = require(root + '/config')(true);
 
 var Account = require(root + '/app/api/models/account.model');
@@ -22,7 +22,7 @@ router.post('/register', (req, res) => {
                 if(err)
                     return next(err);
 
-                res.send({ ok: 1, user: userProperties(account, config.userProperties) });
+                res.send({ ok: 1, user: showProperties(account, config.userProperties) });
             });
         });
     });
@@ -42,7 +42,7 @@ router.post('/login', (req, res) => {
 
             req.loggedIn = true;
 
-            res.send({ ok: 1, user: userProperties(user, config.userProperties) });
+            res.send({ ok: 1, user: showProperties(user, config.userProperties) });
         });
     })(req, res);
 });

@@ -11,7 +11,7 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const root = path.resolve(path.dirname(require.main.filename), '..');
 
-const userProperties = require(root + '/app/functions/userProperties.function');
+const showProperties = require(root + '/app/functions/showProperties.function');
 const master = express();
 const config = require(root + '/config')(true);
 
@@ -58,7 +58,7 @@ master.use((req, res) => {
     if(typeof req.user == 'undefined')
         return res.render(root + '/app/www/site/login', { redirectURL: req.url, localIP: localIP, config: config });
 
-    res.render(root + '/app/www/site/' + path.basename(req.url), { user: userProperties(req.user, config.userProperties), localIP: localIP, config: config }, (err, html) => {
+    res.render(root + '/app/www/site/' + path.basename(req.url), { user: showProperties(req.user, config.userProperties), localIP: localIP, config: config }, (err, html) => {
         if(err)
             return res.status(404).render(root + '/app/www/errors/404');
 
