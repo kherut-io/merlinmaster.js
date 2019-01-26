@@ -74,7 +74,7 @@ passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
 //CONNECT TO MONGODB
-mongoose.connect(config.mongo._address, { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(config.mongo._mongoAddress, { useNewUrlParser: true, useCreateIndex: true });
 
 master.listen(httpPort, (err) => {
     if(err)

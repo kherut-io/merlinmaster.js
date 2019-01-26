@@ -1,4 +1,5 @@
 const path = require('path');
+const md5 = require('md5');
 
 const root = path.resolve(path.dirname(require.main.filename), '..');
 
@@ -58,7 +59,34 @@ exports.newProfile = (req, res) => {
                 return res.send({ ok: 0, message: 'There\'s a profile with that name already.' });
         }
 
-        profiles.push({ name: req.body.name, pin: req.body.pin, privileges: req.body.privileges.split(',') });
+        profiles.push({ name: req.body.name, pinHash: md5(req.body.pin), privileges: req.body.privileges.split(',') });
+
+        account.profiles = profiles;
+
+        Account.findOneAndUpdate({ username: req.user.username }, account, (err, data) => {
+            if(err)
+                return res.send({ ok: 0, error: err });
+
+            return res.send({ ok: 1 });
+        });
+    }
+};
+
+exports.removeProfile = (req, res) => {
+    if(typeof req.user == 'undefined')
+        return res.send({ ok: 0, message: 'You need to be logged in first!' });
+
+    else {
+        var account = req.user;
+        var profiles = req.user.profiles;
+
+        for(var i = 0; i < profiles.length; i++) {
+            if(profiles[i].name == req.params.name) {
+                profiles.splice(i, 1);
+
+                break;
+            }
+        }
 
         account.profiles = profiles;
 

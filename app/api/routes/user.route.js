@@ -10,6 +10,10 @@ router.get('/profiles/:name', (req, res) => {
     controller.getProfile(req, res);      
 });
 
+router.delete('/profiles/:name', (req, res) => {
+    controller.removeProfile(req, res);      
+});
+
 router.post('/profiles/new', (req, res) => {
     controller.newProfile(req, res);
 });
