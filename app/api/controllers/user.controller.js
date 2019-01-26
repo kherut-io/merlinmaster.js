@@ -79,12 +79,57 @@ exports.removeProfile = (req, res) => {
     else {
         var account = req.user;
         var profiles = req.user.profiles;
+        var i;
 
-        for(var i = 0; i < profiles.length; i++) {
+        for(i = 0; i < profiles.length; i++) {
             if(profiles[i].name == req.params.name) {
                 profiles.splice(i, 1);
 
                 break;
+            }
+        }
+
+        if(i == profiles.length)
+            return res.send({ ok: 0, message: 'No such profile!' });
+
+
+        account.profiles = profiles;
+
+        Account.findOneAndUpdate({ username: req.user.username }, account, (err, data) => {
+            if(err)
+                return res.send({ ok: 0, error: err });
+
+            return res.send({ ok: 1 });
+        });
+    }
+};
+
+exports.editProfile = (req, res) => {
+    if(typeof req.user == 'undefined')
+        return res.send({ ok: 0, message: 'You need to be logged in first!' });
+
+    else {
+        var account = req.user;
+        var profiles = req.user.profiles;
+        var i;
+        
+        const properties = ['name', 'pin', 'privileges'];
+
+        for(i = 0; i < profiles.length; i++) {
+            if(profiles[i].name == req.params.name)
+                break;
+        }
+
+        if(i == profiles.length)
+            return res.send({ ok: 0, message: 'No such profile!' });
+
+        for(var key in req.body) {
+            if(properties.includes(key)) {
+                if(key == 'pin')
+                    profiles[i].pinHash = md5(req.body[key]);
+
+                else
+                    profiles[i][key] = req.body[key];
             }
         }
 
