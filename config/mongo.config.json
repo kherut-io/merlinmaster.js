@@ -1,3 +1,3 @@
 {
-    "_address": "<MongoDB URI>"
+    "_mongoAddress": "<MongoDB URI>"
 }
